@@ -43,8 +43,8 @@ or
     $stream = new Stream();
     $stream->add($word);
     $stream->add($word);
-
-    echo $stream; //                             10001110|10001110|10001110|10001110|
+    $stream->add(new Byte(0xF0));
+    echo $stream; //                             1000111010001110 1000111010001110 11110000 
 
 #### Pack stream and dump to file  ####
 
@@ -52,3 +52,11 @@ or
 or  
 
     file_put_contents("stream", $stream->pack(Stream::PACK_MODE_LITTLEENDIAN));
+
+#### Unpack stream and get access to bits  ####
+
+    $data = file_get_contents("stream");
+    $format = "2|2|1";
+    $stream = Stream::createFrom($data, $format);
+    echo $stream;
+    echo var_dump($stream->get(3)->getBit(1)); // 1
