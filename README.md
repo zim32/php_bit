@@ -58,5 +58,5 @@ or
     $data = file_get_contents("stream");
     $format = "2|2|1";
     $stream = Stream::createFrom($data, $format);
-    echo $stream;
+    echo $stream; //                           1000111010001110 1000111010001110 11110000
     echo var_dump($stream->get(3)->getBit(1)); // 1
