@@ -49,3 +49,6 @@ or
 #### Pack stream and dump to file  ####
 
     file_put_contents("stream", $stream->pack());
+or  
+
+    file_put_contents("stream", $stream->pack(Stream::PACK_MODE_LITTLEENDIAN));
