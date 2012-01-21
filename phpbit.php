@@ -17,16 +17,17 @@ abstract class Num {
 		return $this->toS();
 	}
 
-	public function toS(){
+	public function toS($split=0,$split_char=" "){
 		$str = decbin($this->val);
 		$str = str_pad($str, $this->getValSize(), "0",STR_PAD_LEFT);
+		if($split !== 0) $str = chunk_split($str,$split,$split_char);
 		return $str;
 	}
 
-	public function toHexString($split=0){
+	public function toHexString($split=0,$split_char=" "){
 		$str = sprintf("%X",$this->val);
 		$str = str_pad($str, $this->getValSize()/4, "0",STR_PAD_LEFT);
-		if($split !== 0) $str = chunk_split($str,$split," ");
+		if($split !== 0) $str = chunk_split($str,$split,$split_char);
 		return $str;
 	}
 
@@ -103,7 +104,11 @@ class Word extends Num {
 
 	function getValSize(){ return 16; }
 
-	function packVal($mode){ return pack("n",$this->val); }
+	function packVal($mode){
+		if($mode == Stream::PACK_MODE_BIGENDIAN) 		return pack("n",$this->val);
+		elseif($mode == Stream::PACK_MODE_LITTLEENDIAN) return pack("v",$this->val);
+
+	}
 
 	public function __construct(){
 		if(count($args = func_get_args()) == 2){
@@ -126,7 +131,10 @@ class Dword extends Num {
 
 	function getValSize(){ return 32; }
 
-	function packVal($mode){ return pack("N",$this->val); }
+	function packVal($mode){
+		if($mode == Stream::PACK_MODE_BIGENDIAN) 		return pack("N",$this->val);
+		elseif($mode == Stream::PACK_MODE_LITTLEENDIAN) return pack("V",$this->val);
+	}
 
 	public function __construct(){
 		if(count($args = func_get_args()) == 4){
