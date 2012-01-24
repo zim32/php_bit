@@ -234,6 +234,10 @@ class Stream {
 		return $this->buff[$pos-1];
 	}
 
+	public function getAll(){
+		return $this->buff;
+	}
+
 	public function __toString(){
 		return $this->toS(self::TO_STRING_STYLE_GROUPED);
 	}
