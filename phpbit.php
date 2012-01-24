@@ -76,6 +76,16 @@ abstract class Num {
 		$this->val ^= $a->toN();
 	}
 
+	public function getRange($start,$count){
+		$mask = 0;
+		for($i=0;$i<$count;$i++){
+			$mask|=pow(2,($this->getValSize()-1)-($start-1+$i));
+		}
+		$res = $this->val&$mask;
+		$res = $res>>($this->getValSize()-($start+$count-1));
+		return $res;
+	}
+
 	/**
 	 * @abstract
 	 * @return int
@@ -312,9 +322,21 @@ class Stream {
 	}
 
 	public function unPack($data,$format){
+		$length = strlen($data);
 		$format = explode("|",$format);
 		$offset = 0;
-		foreach($format as $size){
+		foreach($format as $key=>$size){
+			if(empty($size)) continue;
+			if($size == '*' && $offset > 0){
+				$last_size = $format[count($format)-2];
+				$f = '';
+				for($i=$offset; $i<$length; $i+=$last_size){
+					$f.='|'.$last_size;
+				}
+				
+				$data = $this->substr($data,$offset,null);
+				$this->unPack($data, $f);
+			}
 			foreach(self::$types as $type){
 				$classname = "PhpBit\\".$type;
 				if($classname::VAL_SIZE == $size*8){
@@ -334,6 +356,6 @@ class Stream {
 	}
 
 	public function substr($data,$start,$end){
-		return substr($data,$start,$end);
+		return ($end !== null)?substr($data,$start,$end):substr($data,$start);
 	}
 }
